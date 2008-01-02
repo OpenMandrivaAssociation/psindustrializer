@@ -17,6 +17,7 @@ Source3: 	%{name}16.png
 URL:		http://uts.cc.utexas.edu/~foxx/industrializer/
 License:	GPL
 Group:		Sound
+BuildRoot:	%{_tmppath}/%{name}-buildroot
 BuildRequires:	libgnome-devel gtk+2-devel gettext
 BuildRequires:	gtkglarea2-devel mesaglu-devel desktop-file-utils
 
