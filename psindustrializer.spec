@@ -67,10 +67,6 @@ mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
 mv $RPM_BUILD_ROOT%{_datadir}/gnome/apps/Multimedia/%{name}.desktop $RPM_BUILD_ROOT%{_datadir}/applications/%{name}.desktop
 
 #menu
-mkdir -p $RPM_BUILD_ROOT%{_menudir}
-cat << EOF > $RPM_BUILD_ROOT%{_menudir}/%{name}
-?package(%{name}): command="%{name}" icon="%{name}.png" needs="x11" title="PSIndustrializer" longtitle="Digital Percussion Creation" section="Multimedia/Sound" xdg="true"
-EOF
 
 desktop-file-install --vendor="" \
   --remove-category="Application" \
@@ -104,7 +100,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc README
 %{_bindir}/%name
-%{_menudir}/%name
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/*
 %{_datadir}/%{name}/*.xpm
