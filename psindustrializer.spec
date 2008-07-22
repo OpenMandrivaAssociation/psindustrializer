@@ -1,6 +1,6 @@
 %define name	psindustrializer
 %define version	0.2.5
-%define release %mkrel 4
+%define release %mkrel 5
 
 %define major	0
 %define libname %mklibname psphymod %major
