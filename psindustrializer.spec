@@ -10,16 +10,19 @@ Summary: 	Percussion Sample Generator (Discrete Mass Physical Modelling)
 Version: 	%{version}
 Release: 	%{release}
 
-Source:		%{name}-%{version}.tar.bz2
+Source0:	%{name}-%{version}.tar.bz2
 Source1: 	%{name}48.png
 Source2: 	%{name}32.png
 Source3: 	%{name}16.png
 URL:		http://uts.cc.utexas.edu/~foxx/industrializer/
 License:	GPL
 Group:		Sound
-BuildRoot:	%{_tmppath}/%{name}-buildroot
-BuildRequires:	libgnome-devel gtk+2-devel gettext
-BuildRequires:	gtkglarea2-devel mesaglu-devel desktop-file-utils
+#BuildRequires:	libgnome-devel gtk+2-devel gettext
+#BuildRequires:	gtkglarea2-devel mesaglu-devel desktop-file-utils
+BuildRequires:	pkgconfig(gtkgl-2.0)
+BuildRequires:	pkgconfig(audiofile)
+BuildRequires:	pkgconfig(glu)
+BuildRequires:	desktop-file-utils
 
 %description
 Industrializer is a program for generating percussion sounds for musical
@@ -55,57 +58,53 @@ Libraries and includes files for developing programs based on %name.
 %setup -q
 
 %build
-%configure2_5x
+sed -i 's/if test "$AUDIOFILE_CONFIG" = "no" ; then/if false; then/' configure
+export CFLAGS="%{optflags} -laudiofile"
+%configure2_5x --disable-audiofiletest
 %make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-%makeinstall
+%makeinstall_std
 
 #fix desktop file location
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
-mv $RPM_BUILD_ROOT%{_datadir}/gnome/apps/Multimedia/%{name}.desktop $RPM_BUILD_ROOT%{_datadir}/applications/%{name}.desktop
+mkdir -p %{buildroot}%{_datadir}/applications
+
+cat > %{buildroot}%{_datadir}/applications/%{name}.desktop <<EOF
+[Desktop Entry]
+Name=psindustrializer
+GenericName=Sound Editor
+Comment=Power Station Industrializer
+Exec=%{_bindir}/%{name} 
+Icon=%{name}
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=AudioVideo;Audio;Video;Player;
+EOF
+
+
+#mv %{buildroot}%{_datadir}/gnome/apps/Multimedia/%{name}.desktop %{buildroot}%{_datadir}/applications/%{name}.desktop
+rm -f %{buildroot}%{_datadir}/gnome/apps/Multimedia/%{name}.desktop
 
 #menu
 
 desktop-file-install --vendor="" \
   --remove-category="Application" \
   --add-category="Sequencer" \
-  --add-category="X-MandrivaLinux-Multimedia-Sound;AudioVideo" \
-  --dir $RPM_BUILD_ROOT%{_datadir}/applications $RPM_BUILD_ROOT%{_datadir}/applications/*
+  --add-category="X-MandrivaLinux-Multimedia-Sound" \
+  --dir %{buildroot}%{_datadir}/applications %{buildroot}%{_datadir}/applications/*
 
 #icons
-mkdir -p $RPM_BUILD_ROOT/%_liconsdir
-cat %SOURCE1 > $RPM_BUILD_ROOT/%_liconsdir/%name.png
-mkdir -p $RPM_BUILD_ROOT/%_iconsdir
-cat %SOURCE2 > $RPM_BUILD_ROOT/%_iconsdir/%name.png
-mkdir -p $RPM_BUILD_ROOT/%_miconsdir
-cat %SOURCE3 > $RPM_BUILD_ROOT/%_miconsdir/%name.png
+mkdir -p %{buildroot}/%_liconsdir
+cat %SOURCE1 > %{buildroot}/%_liconsdir/%name.png
+mkdir -p %{buildroot}/%_iconsdir
+cat %SOURCE2 > %{buildroot}/%_iconsdir/%name.png
+mkdir -p %{buildroot}/%_miconsdir
+cat %SOURCE3 > %{buildroot}/%_miconsdir/%name.png
 
 %find_lang %name
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-%if %mdkversion < 200900
-%post
-%update_menus
-%endif
-		
-%if %mdkversion < 200900
-%postun
-%clean_menus
-%endif
-
-%if %mdkversion < 200900
-%post -n %{libname} -p /sbin/ldconfig
-%endif
-%if %mdkversion < 200900
-%postun -n %{libname} -p /sbin/ldconfig
-%endif
-
 %files -f %{name}.lang
-%defattr(-,root,root)
 %doc README
 %{_bindir}/%name
 %{_datadir}/applications/%{name}.desktop
@@ -116,13 +115,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_miconsdir}/%name.png
 
 %files -n %{libname}
-%defattr(-,root,root)
 %{_libdir}/*.so.*
 
 %files -n %{libname}-devel
-%defattr(-,root,root)
 %{_includedir}/psphymod
 %{_libdir}/*.so
 %{_libdir}/*.a
-%{_libdir}/*.la
-
