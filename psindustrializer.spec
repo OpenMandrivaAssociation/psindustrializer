@@ -14,7 +14,7 @@ Source0:	%{name}-%{version}.tar.bz2
 Source1: 	%{name}48.png
 Source2: 	%{name}32.png
 Source3: 	%{name}16.png
-URL:		http://uts.cc.utexas.edu/~foxx/industrializer/
+URL:		https://uts.cc.utexas.edu/~foxx/industrializer/
 License:	GPL
 Group:		Sound
 #BuildRequires:	libgnome-devel gtk+2-devel gettext
