@@ -19,6 +19,11 @@ License:	GPL
 Group:		Sound
 #BuildRequires:	libgnome-devel gtk+2-devel gettext
 #BuildRequires:	gtkglarea2-devel mesaglu-devel desktop-file-utils
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	pkgconfig(gtkgl-2.0)
 BuildRequires:	pkgconfig(audiofile)
 BuildRequires:	pkgconfig(glu)
